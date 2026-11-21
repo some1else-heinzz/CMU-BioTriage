@@ -12,12 +12,12 @@ foreach (board() as $facility) {
 }
 page_head('Antivenom status', 'board');
 ?>
-<p class="board-load-note" id="board-load-note">Last loaded: checking...</p>
+<p class="board-load-note" id="board-load-note"><span class="load-icon"><?= icon('clock') ?></span><span id="board-load-text">Last loaded: checking...</span></p>
 <section class="summary" aria-label="Stock status summary">
-  <div class="summary-item"><span>All facilities</span><strong><?= $counts['all'] ?></strong></div>
-  <div class="summary-item"><span>Confirmed available</span><strong><?= $counts['available'] ?></strong></div>
-  <div class="summary-item"><span>Restock announced</span><strong><?= $counts['restock'] ?></strong></div>
-  <div class="summary-item"><span>Needs confirmation</span><strong><?= $counts['unknown'] ?></strong></div>
+  <div class="summary-item summary-all"><span class="summary-icon"><?= icon('building') ?></span><div><span>All facilities</span><strong><?= $counts['all'] ?></strong></div></div>
+  <div class="summary-item summary-available"><span class="summary-icon"><?= icon('check') ?></span><div><span>Confirmed available</span><strong><?= $counts['available'] ?></strong></div></div>
+  <div class="summary-item summary-restock"><span class="summary-icon"><?= icon('megaphone') ?></span><div><span>Restock announced</span><strong><?= $counts['restock'] ?></strong></div></div>
+  <div class="summary-item summary-confirm"><span class="summary-icon"><?= icon('bell') ?></span><div><span>Needs confirmation</span><strong><?= $counts['unknown'] ?></strong></div></div>
 </section>
 <p class="note" role="note">This board can be out of date. A restock announcement is not a current stock confirmation. Always call before sending a patient.</p>
 <form method="get" class="filters" role="search" aria-label="Filter antivenom facilities">
@@ -54,7 +54,7 @@ page_head('Antivenom status', 'board');
   <?php endif; ?>
   <?php if ($old): ?><p class="flag"><?= $min === null ? 'Nobody has confirmed this yet.' : 'This information is more than ' . STALE_HOURS . ' hours old.' ?> Call to confirm before sending a patient.</p><?php endif; ?>
   <div class="row">
-    <?php if ($f['phone'] !== ''): ?><a class="btn pri" href="tel:<?= h(preg_replace('/[^\d+]/', '', $f['phone'])) ?>">Call to confirm</a>
+    <?php if ($f['phone'] !== ''): ?><a class="btn pri" href="tel:<?= h(preg_replace('/[^\d+]/', '', $f['phone'])) ?>"><span class="button-icon"><?= icon('phone') ?></span>Call to confirm</a>
     <?php else: ?><span class="btn dis">Number not set</span><?php endif; ?>
     <?php if (is_staff()): ?><a class="btn" href="<?= h(url('staff/confirm.php?facility=' . (int)$f['id'])) ?>">Log a confirmation</a><?php endif; ?>
   </div>
@@ -67,10 +67,10 @@ page_head('Antivenom status', 'board');
   }
   const loadedAt = localStorage.getItem('cmu-biotriage-board-loaded');
   if (loadedAt) {
-    document.getElementById('board-load-note').textContent =
+    document.getElementById('board-load-text').textContent =
       'Last loaded: ' + new Date(loadedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
   } else {
-    document.getElementById('board-load-note').textContent = 'Last loaded: not yet recorded';
+    document.getElementById('board-load-text').textContent = 'Last loaded: not yet recorded';
   }
 </script>
 <?php page_foot();
