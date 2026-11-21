@@ -95,14 +95,38 @@ function validate_confirmation(array $in): array {
 function page_head(string $title, string $active = ''): void {
     $u = user();
     echo '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
+       . '<meta name="theme-color" content="#146b57">'
        . '<title>' . h($title) . ' | CMU Snakebite Response Support</title><link rel="stylesheet" href="' . h(url('assets/style.css')) . '"></head><body>'
        . '<header><p class="site">CMU Snakebite Response Support</p><h1>' . h($title) . '</h1>'
        . '<nav aria-label="Main"><a href="' . h(url('index.php')) . '"' . ($active === 'board' ? ' aria-current="page"' : '') . '>Antivenom status</a>';
     if (is_staff()) echo '<a href="' . h(url('staff/confirm.php')) . '"' . ($active === 'confirm' ? ' aria-current="page"' : '') . '>Log a confirmation</a>';
+    if (is_staff()) echo '<a href="' . h(url('staff/testing.php')) . '"' . ($active === 'testing' ? ' aria-current="page"' : '') . '>Testing and changes</a>';
+    if (is_admin()) echo '<a href="' . h(url('staff/admin.php')) . '"' . ($active === 'admin' ? ' aria-current="page"' : '') . '>Admin page</a>';
     echo $u
         ? '<form method="post" action="' . h(url('logout.php')) . '"><input type="hidden" name="csrf" value="' . h(csrf_token()) . '"><button>Log out (' . h($u['name']) . ')</button></form>'
         : '<a href="' . h(url('login.php')) . '">Staff log in</a>';
+    echo '<a href="' . h(url('handoff.php')) . '"' . ($active === 'handoff' ? ' aria-current="page"' : '') . '>Handoff summary</a>';
+    echo '<a href="' . h(url('first_aid.php')) . '"' . ($active === 'first-aid' ? ' aria-current="page"' : '') . '>First aid and contacts</a>';
     echo '</nav></header><main>';
     if ($m = flash()) echo '<p class="toast" role="status">' . h($m) . '</p>';
 }
-function page_foot(): void { echo '</main></body></html>'; }
+function page_foot(): void {
+    echo '</main>'
+       . '<script>'
+       . 'if ("serviceWorker" in navigator) { window.addEventListener("load", function () { navigator.serviceWorker.register(' . json_encode(url('sw.js')) . '); }); }'
+       . 'const offlineBanner = document.createElement("div");'
+       . 'offlineBanner.className = "offline-banner";'
+       . 'offlineBanner.setAttribute("role", "status");'
+       . 'function updateConnectionStatus() {'
+       . 'if (!navigator.onLine) {'
+       . 'offlineBanner.textContent = "Offline mode: showing the most recently cached page.";'
+       . 'offlineBanner.hidden = false;'
+       . 'document.body.prepend(offlineBanner);'
+       . '} else { offlineBanner.hidden = true; }'
+       . '}'
+       . 'window.addEventListener("offline", updateConnectionStatus);'
+       . 'window.addEventListener("online", updateConnectionStatus);'
+       . 'updateConnectionStatus();'
+       . '</script>'
+       . '</body></html>';
+}

@@ -35,6 +35,20 @@ CREATE TABLE confirmations (
   INDEX idx_fac_time (facility_id, created_at)
 );
 
+CREATE TABLE validation_records (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  tester_type ENUM('uh_staff','student','other') NOT NULL,
+  task_name VARCHAR(150) NOT NULL,
+  result ENUM('pass','issue','blocked') NOT NULL,
+  accessibility_notes VARCHAR(1500) NOT NULL DEFAULT '',
+  problem_notes VARCHAR(1500) NOT NULL DEFAULT '',
+  change_made VARCHAR(1500) NOT NULL DEFAULT '',
+  resolved TINYINT(1) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
 -- Facilities named in the Discover interviews. No stock data is pre-filled.
 INSERT INTO facilities (name, place) VALUES
 ('Bukidnon Provincial Hospital (BPH)', 'Maramag, Bukidnon. Nearest known stock, about 15 km from CMU.'),

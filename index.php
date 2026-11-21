@@ -12,6 +12,7 @@ foreach (board() as $facility) {
 }
 page_head('Antivenom status', 'board');
 ?>
+<p class="board-load-note" id="board-load-note">Last loaded: checking...</p>
 <section class="summary" aria-label="Stock status summary">
   <div class="summary-item"><span>All facilities</span><strong><?= $counts['all'] ?></strong></div>
   <div class="summary-item"><span>Confirmed available</span><strong><?= $counts['available'] ?></strong></div>
@@ -60,4 +61,16 @@ page_head('Antivenom status', 'board');
 </article>
 <?php endforeach; ?>
 </section>
+<script>
+  if (navigator.onLine) {
+    localStorage.setItem('cmu-biotriage-board-loaded', new Date().toISOString());
+  }
+  const loadedAt = localStorage.getItem('cmu-biotriage-board-loaded');
+  if (loadedAt) {
+    document.getElementById('board-load-note').textContent =
+      'Last loaded: ' + new Date(loadedAt).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' });
+  } else {
+    document.getElementById('board-load-note').textContent = 'Last loaded: not yet recorded';
+  }
+</script>
 <?php page_foot();

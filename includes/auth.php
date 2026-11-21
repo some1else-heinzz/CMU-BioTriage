@@ -10,8 +10,12 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 function user(): ?array { return $_SESSION['user'] ?? null; }
 function is_staff(): bool { $u = user(); return $u && in_array($u['role'], ['staff', 'admin'], true); }
+function is_admin(): bool { $u = user(); return $u && $u['role'] === 'admin'; }
 function require_staff(): void {
     if (!is_staff()) { header('Location: ' . BASE . '/login.php'); exit; }
+}
+function require_admin(): void {
+    if (!is_admin()) { header('Location: ' . BASE . '/login.php'); exit; }
 }
 function csrf_token(): string { return $_SESSION['csrf'] ??= bin2hex(random_bytes(32)); }
 function csrf_check(): void {
